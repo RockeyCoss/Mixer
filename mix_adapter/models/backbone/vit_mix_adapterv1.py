@@ -68,9 +68,14 @@ class MixerModule(BaseModule):
     def __init__(self,
                  num_channels=768,
                  norm_cfg=dict(type='LN', eps=1e-6, requires_grad=True),
+                 dropout_layer=None,
                  init_cfg=None):
         super(MixerModule, self).__init__(init_cfg)
         self.mix_linear = nn.Linear(25, 25)
+
+        self.dropout_layer = build_dropout(
+            dropout_layer) if dropout_layer else torch.nn.Identity()
+
         self.vit_norm = build_norm_layer(norm_cfg, num_channels)[1]
         self.f8_norm = build_norm_layer(norm_cfg, num_channels)[1]
         self.f16_norm = build_norm_layer(norm_cfg, num_channels)[1]
@@ -80,9 +85,9 @@ class MixerModule(BaseModule):
         self.f16_norm2 = build_norm_layer(norm_cfg, num_channels)[1]
         self.f32_norm2 = build_norm_layer(norm_cfg, num_channels)[1]
 
-        self.feature8_ffn = CFFN(num_channels, 4)
-        self.feature16_ffn = CFFN(num_channels, 4)
-        self.feature32_ffn = CFFN(num_channels, 4)
+        self.feature8_ffn = CFFN(num_channels, 4, dropout_layer=dropout_layer)
+        self.feature16_ffn = CFFN(num_channels, 4, dropout_layer=dropout_layer)
+        self.feature32_ffn = CFFN(num_channels, 4, dropout_layer=dropout_layer)
 
         self.gamma = nn.Parameter(torch.zeros(1, num_channels, 1, 1))
 
@@ -145,11 +150,11 @@ class MixerModule(BaseModule):
         # B, H, W, C -> B, C, H, W
         feature32 = feature32.permute(0, 3, 1, 2)
 
-        feature8 = feature8 + feature8_i
-        feature16 = feature16 + feature16_i
-        feature32 = feature32 + feature32_i
+        feature8 = self.dropout_layer(feature8) + feature8_i
+        feature16 = self.dropout_layer(feature16) + feature16_i
+        feature32 = self.dropout_layer(feature32) + feature32_i
 
-        vit_feature = vit_feature_i + self.gamma * vit_feature
+        vit_feature = vit_feature_i + self.dropout_layer(self.gamma * vit_feature)
         feature8 = self.feature8_ffn(nchw2nlc2nchw(self.f8_norm2,
                                                    feature8),
                                      feature8)
@@ -242,7 +247,14 @@ class ViTMixAdapterv1(VisionTransformer):
                                                                 embed_dims,
                                                                 1,
                                                                 1)) for i in range(3))
-        self.adap_interactions = ModuleList(MixerModule(embed_dims) for i in range(self.num_interactions))
+
+        inter_dpr = [
+            x.item() for x in torch.linspace(0, drop_path_rate, self.num_interactions)
+        ]  # stochastic depth decay rule
+        self.adap_interactions = ModuleList(MixerModule(embed_dims,
+                                                        dropout_layer=dict(type='DropPath',
+                                                                           drop_prob=inter_dpr[i]))
+                                            for i in range(self.num_interactions))
         self.adap_interaction_indexes = [(num_layers // num_interactions) * i - 1
                                          for i in range(1,
                                                         self.num_interactions + 1)]
