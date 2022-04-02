@@ -106,19 +106,20 @@ class MixerModule(BaseModule):
         # -> B, H, W, C, 4
         vit_feature = vit_feature.reshape(b, c, h, 2, w, 2). \
             permute(0, 2, 4, 1, 3, 5).contiguous(). \
-            view(b, h, w, c, 4)
+            view(b, h, w, c, 4).contiguous()
         # B, C, 4H, 4W -> B, C, H, 4, W, 4 -> B, H, W, C, 4, 4
         # -> B, H, W, C, 16
         feature8 = feature8.reshape(b, c, h, 4, w, 4). \
             permute(0, 2, 4, 1, 3, 5).contiguous(). \
-            view(b, h, w, c, 16)
+            view(b, h, w, c, 16).contiguous()
         # B, C, 2H, 2W -> B, C, H, 2, W, 2 -> B, H, W, C, 2, 2
         # -> B, H, W, C, 4
         feature16 = feature16.reshape(b, c, h, 2, w, 2). \
             permute(0, 2, 4, 1, 3, 5).contiguous(). \
-            view(b, h, w, c, 4)
+            view(b, h, w, c, 4).contiguous()
         # B, C, H, W -> B, H, W, C, 1
-        feature32 = feature32.permute(0, 2, 3, 1).unsqueeze(-1)
+        feature32 = feature32.permute(0, 2, 3, 1).unsqueeze(-1)\
+            .contiguous()
         # B, H, W, C, 25
         aligned_feature = torch.cat((vit_feature,
                                      feature8,
@@ -138,17 +139,20 @@ class MixerModule(BaseModule):
         # B, H, W, C, 4 -> B, H, W, C, 2, 2 -> B, C, H, 2, W, 2
         # -> B, C, 2H, 2W
         vit_feature = vit_feature.reshape(b, h, w, c, 2, 2). \
-            permute(0, 3, 1, 4, 2, 5).contiguous().view(b, c, 2 * h, 2 * w)
+            permute(0, 3, 1, 4, 2, 5).contiguous().view(b, c, 2 * h, 2 * w).\
+            contiguous()
         # B, H, W, C, 16 -> B, H, W, C, 4, 4 -> B, C, H, 4, W, 4
         # -> B, C, 4H, 4W
         feature8 = feature8.reshape(b, h, w, c, 4, 4). \
-            permute(0, 3, 1, 4, 2, 5).contiguous().view(b, c, 4 * h, 4 * w)
+            permute(0, 3, 1, 4, 2, 5).contiguous().view(b, c, 4 * h, 4 * w).\
+            contiguous()
         # B, H, W, C, 4 -> B, H, W, C, 2, 2 -> B, C, H, 2, W, 2
         # -> B, C, 2H, 2W
         feature16 = feature16.reshape(b, h, w, c, 2, 2). \
-            permute(0, 3, 1, 4, 2, 5).contiguous().view(b, c, 2 * h, 2 * w)
+            permute(0, 3, 1, 4, 2, 5).contiguous().view(b, c, 2 * h, 2 * w).\
+            contiguous()
         # B, H, W, C -> B, C, H, W
-        feature32 = feature32.permute(0, 3, 1, 2)
+        feature32 = feature32.permute(0, 3, 1, 2).contiguous()
 
         feature8 = self.dropout_layer(feature8) + feature8_i
         feature16 = self.dropout_layer(feature16) + feature16_i
