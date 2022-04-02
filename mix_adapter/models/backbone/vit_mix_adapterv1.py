@@ -160,13 +160,16 @@ class MixerModule(BaseModule):
 
         vit_feature = vit_feature_i + self.dropout_layer(self.gamma * vit_feature)
         feature8 = self.feature8_ffn(nchw2nlc2nchw(self.f8_norm2,
-                                                   feature8),
+                                                   feature8,
+                                                   contiguous=True),
                                      feature8)
         feature16 = self.feature16_ffn(nchw2nlc2nchw(self.f16_norm2,
-                                                     feature16),
+                                                     feature16,
+                                                     contiguous=True),
                                        feature16)
         feature32 = self.feature32_ffn(nchw2nlc2nchw(self.f32_norm2,
-                                                     feature32),
+                                                     feature32,
+                                                     contiguous=True),
                                        feature32)
         return vit_feature, [feature8, feature16, feature32]
 
