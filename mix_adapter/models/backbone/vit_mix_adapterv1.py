@@ -303,7 +303,7 @@ class ViTMixAdapterv1(VisionTransformer):
             load_state_dict(self, state_dict, strict=False, logger=logger)
             for n, m in self.named_modules():
                 if n.startswith('adap_'):
-                    if getattr(m, 'init_weights'):
+                    if hasattr(m, 'init_weights'):
                         m.init_weights()
                     else:
                         if isinstance(m, nn.Linear):
