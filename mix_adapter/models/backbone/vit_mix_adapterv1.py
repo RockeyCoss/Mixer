@@ -303,17 +303,20 @@ class ViTMixAdapterv1(VisionTransformer):
             load_state_dict(self, state_dict, strict=False, logger=logger)
             for n, m in self.named_modules():
                 if n.startswith('adapt_'):
-                    if isinstance(m, nn.Linear):
-                        trunc_normal_(m.weight, std=.02)
-                        if m.bias is not None:
-                            if 'ffn' in n:
-                                nn.init.normal_(m.bias, mean=0., std=1e-6)
-                            else:
-                                nn.init.constant_(m.bias, 0)
-                    elif isinstance(m, nn.Conv2d):
-                        kaiming_init(m, mode='fan_in', bias=0.)
-                    elif isinstance(m, (_BatchNorm, nn.GroupNorm, nn.LayerNorm)):
-                        constant_init(m, val=1.0, bias=0.)
+                    if getattr(m, 'init_weights'):
+                        m.init_weights()
+                    else:
+                        if isinstance(m, nn.Linear):
+                            trunc_normal_(m.weight, std=.02)
+                            if m.bias is not None:
+                                if 'ffn' in n:
+                                    nn.init.normal_(m.bias, mean=0., std=1e-6)
+                                else:
+                                    nn.init.constant_(m.bias, 0)
+                        elif isinstance(m, nn.Conv2d):
+                            kaiming_init(m, mode='fan_in', bias=0.)
+                        elif isinstance(m, (_BatchNorm, nn.GroupNorm, nn.LayerNorm)):
+                            constant_init(m, val=1.0, bias=0.)
 
         elif self.init_cfg is not None:
             super(VisionTransformer, self).init_weights()
