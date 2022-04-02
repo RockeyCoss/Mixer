@@ -1,4 +1,5 @@
 norm_cfg = dict(type='LN', requires_grad=True)
+conv_norm_cfg=dict(type='SyncBN', requires_grad=True),
 model = dict(
     type='EncoderDecoder',
     pretrained='pretrain/vit_base_p16_384.pth',
@@ -19,7 +20,8 @@ model = dict(
         norm_cfg=dict(type='LN', eps=1e-6, requires_grad=True),
         act_cfg=dict(type='GELU'),
         norm_eval=False,
-        interpolate_mode='bicubic'),
+        interpolate_mode='bicubic',
+        conv_norm_cfg=conv_norm_cfg),
     decode_head=dict(
         type='UPerHead',
         in_channels=[768, 768, 768, 768],
@@ -28,7 +30,7 @@ model = dict(
         channels=512,
         dropout_ratio=0.1,
         num_classes=150,
-        norm_cfg=norm_cfg,
+        norm_cfg=conv_norm_cfg,
         align_corners=False,
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
@@ -41,7 +43,7 @@ model = dict(
         concat_input=False,
         dropout_ratio=0.1,
         num_classes=150,
-        norm_cfg=norm_cfg,
+        norm_cfg=conv_norm_cfg,
         align_corners=False,
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4)),

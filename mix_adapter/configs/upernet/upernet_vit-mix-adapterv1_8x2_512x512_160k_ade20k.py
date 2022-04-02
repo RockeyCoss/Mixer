@@ -67,8 +67,8 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    # By default, models are trained on 8 GPUs with 2 images per GPU
-    samples_per_gpu=2,
+    # By default, models are trained on 4 GPUs with 4 images per GPU
+    samples_per_gpu=4,
     train=dict(pipeline=train_pipeline),
     val=dict(pipeline=test_pipeline),
     test=dict(pipeline=test_pipeline))
