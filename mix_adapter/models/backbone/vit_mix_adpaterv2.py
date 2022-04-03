@@ -308,7 +308,7 @@ class ViTMixAdapterv2(VisionTransformer):
                         (pos_size, pos_size), self.interpolate_mode)
 
             load_state_dict(self, state_dict, strict=False, logger=logger)
-            for n, m in self.named_modules():
+            for n, m in self.named_children():
                 if n.startswith('adap_'):
                     if hasattr(m, 'init_weights'):
                         m.init_weights()
