@@ -5,7 +5,8 @@ from .vit_mix_adapterv4 import ViTMixAdapterv4
 from .vit_mix_adapterv5 import ViTMixAdapterv5
 from .vit_mix_adapterv6 import ViTMixAdapterv6
 from .vit_mix_adapterv7 import ViTMixAdapterv7
+from .vit_mix_adapterv8 import ViTMixAdapterv8
 
 __all__ = ['ViTMixAdapterv1', 'ViTMixAdapterv2', 'ViTMixAdapterv3',
            'ViTMixAdapterv4', 'ViTMixAdapterv5', 'ViTMixAdapterv6',
-           'ViTMixAdapterv7']
+           'ViTMixAdapterv7', 'ViTMixAdapterv8']
