@@ -134,7 +134,7 @@ class MixerModulev6(BaseModule):
                                      feature16,
                                      feature32),
                                     dim=4)
-        aligned_feature = self.mix_transformer(aligned_feature)
+        aligned_feature = self.mix_transform(aligned_feature)
         # B, H, W, C, 4
         vit_feature = aligned_feature[:, :, :, :, 0: 4]
         # B, H, W, C, 16
