@@ -181,7 +181,7 @@ class MixerModulev5(BaseModule):
 
 
 @BACKBONES.register_module()
-class ViTMixAdapterv2(VisionTransformer):
+class ViTMixAdapterv8(VisionTransformer):
     def __init__(self,
                  img_size=224,
                  patch_size=16,
@@ -214,7 +214,7 @@ class ViTMixAdapterv2(VisionTransformer):
                  conv_norm_cfg=dict(type='BN', requires_grad=True),
                  num_interactions=4,
                  align_corners=False):
-        super(ViTMixAdapterv2, self).__init__(img_size,
+        super(ViTMixAdapterv8, self).__init__(img_size,
                                               patch_size,
                                               in_channels,
                                               embed_dims,
