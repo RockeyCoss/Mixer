@@ -197,7 +197,7 @@ class Extraction(BaseModule):
         # B, H, W, C, 4
         feature16 = aligned_feature[:, :, :, :, 16: 20]
         # B, H, W, C
-        feature32 = aligned_feature[:, :, :, :, 21]
+        feature32 = aligned_feature[:, :, :, :, 20]
 
         # B, H, W, C, 16 -> B, H, W, C, 4, 4 -> B, C, H, 4, W, 4
         # -> B, C, 4H, 4W
