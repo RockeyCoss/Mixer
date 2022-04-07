@@ -31,7 +31,7 @@ lr_config = dict(
 
 
 # optimizer_config = dict(grad_clip=None, detect_anomalous_params=True)
-checkpoint_config = dict(by_epoch=False, interval=80000)
+checkpoint_config = dict(by_epoch=False, interval=8000, max_keep_ckpts=1)
 evaluation = dict(interval=8000, metric='mIoU', pre_eval=True)
 
 
