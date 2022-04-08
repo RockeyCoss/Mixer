@@ -45,16 +45,18 @@ class ResBlockPreAct(BaseModule):
         else:
             self.identity_map = nn.Identity()
 
-    def forward(self, x):
+    def forward(self, x, identity):
         # refer to paper
         # Identity Mapping in Deep Residual Networks
+        if identity is None:
+            identity = x
         out = nchw2nlc2nchw(self.norm1, x)
         out = self.act1(out)
         out = self.conv1(out)
         out = nchw2nlc2nchw(self.norm2, out)
         out = self.act2(out)
         out = self.conv2(out)
-        out = self.dropout_layer(out) + self.identity_map(x)
+        out = self.dropout_layer(out) + self.identity_map(identity)
 
         return out
 
@@ -75,10 +77,6 @@ class MixerModulev7(BaseModule):
         self.f8_norm = build_norm_layer(norm_cfg, num_channels)[1]
         self.f16_norm = build_norm_layer(norm_cfg, num_channels)[1]
         self.f32_norm = build_norm_layer(norm_cfg, num_channels)[1]
-
-        self.f8_norm2 = build_norm_layer(norm_cfg, num_channels)[1]
-        self.f16_norm2 = build_norm_layer(norm_cfg, num_channels)[1]
-        self.f32_norm2 = build_norm_layer(norm_cfg, num_channels)[1]
 
         self.ffn = ResBlockPreAct(in_channels=num_channels,
                                   channels=num_channels,
@@ -160,18 +158,9 @@ class MixerModulev7(BaseModule):
         feature32 = self.dropout_layer(feature32) + feature32_i
 
         vit_feature = vit_feature_i + self.dropout_layer(self.gamma * vit_feature)
-        feature8 = self.ffn(nchw2nlc2nchw(self.f8_norm2,
-                                          feature8,
-                                          contiguous=True),
-                            feature8)
-        feature16 = self.ffn(nchw2nlc2nchw(self.f16_norm2,
-                                           feature16,
-                                           contiguous=True),
-                             feature16)
-        feature32 = self.ffn(nchw2nlc2nchw(self.f32_norm2,
-                                           feature32,
-                                           contiguous=True),
-                             feature32)
+        feature8 = self.ffn(feature8)
+        feature16 = self.ffn(feature16)
+        feature32 = self.ffn(feature32)
         feature16 = self.f16_mixer(torch.cat((feature16, vit_feature),
                                              dim=1))
         return vit_feature, [feature8, feature16, feature32]
