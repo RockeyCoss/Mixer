@@ -45,7 +45,7 @@ class ResBlockPreAct(BaseModule):
         else:
             self.identity_map = nn.Identity()
 
-    def forward(self, x, identity):
+    def forward(self, x, identity=None):
         # refer to paper
         # Identity Mapping in Deep Residual Networks
         if identity is None:
