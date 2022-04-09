@@ -12,9 +12,10 @@ from .vit_mix_adapterv11 import ViTMixAdapterv11
 from .vit_mix_adapterv12 import ViTMixAdapterv12
 from .vit_mix_adapterv13 import ViTMixAdapterv13
 from .vit_mix_adapterv14 import ViTMixAdapterv14
+from .vit_mix_adapterv15 import ViTMixAdapterv15
 
 __all__ = ['ViTMixAdapterv1', 'ViTMixAdapterv2', 'ViTMixAdapterv3',
            'ViTMixAdapterv4', 'ViTMixAdapterv5', 'ViTMixAdapterv6',
            'ViTMixAdapterv7', 'ViTMixAdapterv8', 'ViTMixAdapterv9',
            'ViTMixAdapterv10', 'ViTMixAdapterv11', 'ViTMixAdapterv12',
-           'ViTMixAdapterv13', 'ViTMixAdapterv14']
+           'ViTMixAdapterv13', 'ViTMixAdapterv14', 'ViTMixAdapterv15']
