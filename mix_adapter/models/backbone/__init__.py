@@ -18,6 +18,8 @@ from .vit_mix_adapterv17 import ViTMixAdapterv17
 from .vit_mix_adapterv18 import ViTMixAdapterv18
 from .vit_mix_adapterv21 import ViTMixAdapterv21
 from .vit_mix_adapterv22 import ViTMixAdapterv22
+from .vit_mix_adapterv23 import ViTMixAdapterv23
+from .vit_mix_adapterv24 import ViTMixAdapterv24
 
 __all__ = ['ViTMixAdapterv1', 'ViTMixAdapterv2', 'ViTMixAdapterv3',
            'ViTMixAdapterv4', 'ViTMixAdapterv5', 'ViTMixAdapterv6',
@@ -25,4 +27,5 @@ __all__ = ['ViTMixAdapterv1', 'ViTMixAdapterv2', 'ViTMixAdapterv3',
            'ViTMixAdapterv10', 'ViTMixAdapterv11', 'ViTMixAdapterv12',
            'ViTMixAdapterv13', 'ViTMixAdapterv14', 'ViTMixAdapterv15',
            'ViTMixAdapterv16', 'ViTMixAdapterv17', 'ViTMixAdapterv18',
-           'ViTMixAdapterv21', 'ViTMixAdapterv22']
+           'ViTMixAdapterv21', 'ViTMixAdapterv22', 'ViTMixAdapterv23',
+           'ViTMixAdapterv24']
